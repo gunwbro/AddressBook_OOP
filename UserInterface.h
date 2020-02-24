@@ -1,5 +1,6 @@
 #pragma once
 
+// 클래스 전방 선언
 class CMyList;
 
 class CUserInterface

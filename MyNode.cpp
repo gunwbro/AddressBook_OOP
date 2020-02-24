@@ -1,11 +1,12 @@
-//#include "MyNode.h"
-//
-//CMyNode::CMyNode()
-//{
-//
-//}
-//
-//CMyNode::~CMyNode()
-//{
-//
-//}
+#include "MyNode.h"
+
+CMyNode::CMyNode()
+	: pNext(nullptr)
+{
+
+}
+
+CMyNode::~CMyNode()
+{
+
+}

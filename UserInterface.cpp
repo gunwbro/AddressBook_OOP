@@ -1,7 +1,7 @@
 #include "UserInterface.h"
 #include "MyList.h"
 #include "header.h"
-
+#include "UserData.h"
 CUserInterface::CUserInterface(CMyList& rList) : m_List(rList)
 {
 }
@@ -23,7 +23,10 @@ void CUserInterface::Add()
 	fflush(stdin);
 	gets_s(szPhone, sizeof(szPhone));
 
-	m_List.AddNewNode(szName, szPhone);
+	int result = m_List.AddNewNode(new CUserData(szName, szPhone));
+
+	if (result == 0)
+		cout << "이미 존재하는 데이터 입니다." << endl;
 }
 
 int CUserInterface::PrintUI()
@@ -42,7 +45,7 @@ int CUserInterface::PrintUI()
 void CUserInterface::Search()
 {
 	char szName[32] = { 0 };
-	CUserData* pNode = nullptr;
+	CMyNode* pNode = nullptr;
 
 	cout << "Input name : ";
 	fflush(stdin);
@@ -51,10 +54,7 @@ void CUserInterface::Search()
 	pNode = m_List.FindNode(szName);
 	if (pNode != nullptr)
 	{
-		printf("[%p] %s\t%s [%p]\n",
-			pNode,
-			pNode->getName(), pNode->getPhone(),
-			pNode->getNext());
+		pNode->PrintNode();
 	}
 	else
 		cout << "ERROR: 데이터를 찾을 수 없습니다.";

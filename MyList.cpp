@@ -1,56 +1,52 @@
 #include "MyList.h"
 #include "header.h"
+#include "UserData.h"
 
-CMyList::CMyList()
+CMyList::CMyList(CMyNode* pHead)
 {
-
+	m_pHead = pHead;
 }
 
 CMyList::~CMyList()
 {
-
+	ReleaseList();
 }
 
-int CMyList::AddNewNode(const char* pszName, const char* pszPhone)
+int CMyList::AddNewNode(CMyNode* pNewNode)
 {
-	CUserData* pNewUser = nullptr;
+	if (FindNode(pNewNode->getKey()) != nullptr)
+	{
+		delete pNewNode;
 
-	if (FindNode(pszName) != nullptr)
 		return 0;
+	}
 
-	pNewUser = new CUserData;
-	sprintf_s(pNewUser->szName, sizeof(pNewUser->szName), "%s", pszName);
-	sprintf_s(pNewUser->szPhone, sizeof(pNewUser->szPhone), "%s", pszPhone);
-	pNewUser->pNext = nullptr;
-
-	pNewUser->pNext = m_Head.pNext;
-	m_Head.pNext = pNewUser;
+	pNewNode->pNext = m_pHead->pNext;
+	m_pHead->pNext = pNewNode;
 
 	return 1;
 }
 
 void CMyList::PrintAll()
 {
-	CUserData* pTmp = m_Head.pNext;
+	CMyNode* pTmp = m_pHead->pNext;
+
 	while (pTmp != nullptr)
 	{
-		printf("[%p] %s\t%s [%p]\n",
-			pTmp,
-			pTmp->szName, pTmp->szPhone,
-			pTmp->pNext);
-
+		pTmp->PrintNode();
 		pTmp = pTmp->pNext;
 	}
 
+	printf("CUserData Counter : %d\n", CUserData::getUserDataCounter());
 	_getch();
 } 
 
-CUserData* CMyList::FindNode(const char* pszName)
+CMyNode* CMyList::FindNode(const char* pszKey)
 {
-	CUserData* pTmp = m_Head.pNext;
+	CMyNode* pTmp = m_pHead->pNext;
 	while (pTmp != nullptr)
 	{
-		if (strcmp(pTmp->szName, pszName) == 0)
+		if (strcmp(pTmp->getKey(), pszKey) == 0)
 			return pTmp;
 
 		pTmp = pTmp->pNext;
@@ -59,16 +55,16 @@ CUserData* CMyList::FindNode(const char* pszName)
 	return nullptr;
 }
 
-int CMyList::RemoveNode(const char* pszName)
+int CMyList::RemoveNode(const char* pszKey)
 {
-	CUserData* pPrevNode = &m_Head;
-	CUserData* pDelete = nullptr;
+	CMyNode* pPrevNode = m_pHead;
+	CMyNode* pDelete = nullptr;
 
 	while (pPrevNode->pNext != nullptr)
 	{
 		pDelete = pPrevNode->pNext;
 
-		if (strcmp(pDelete->szName, pszName) == 0)
+		if (strcmp(pDelete->getKey(), pszKey) == 0)
 		{
 			pPrevNode->pNext = pDelete->pNext;
 			delete pDelete;
@@ -84,8 +80,8 @@ int CMyList::RemoveNode(const char* pszName)
 
 void CMyList::ReleaseList()
 {
-	CUserData* pTmp = m_Head.pNext;
-	CUserData* pDelete = nullptr;
+	CMyNode* pTmp = m_pHead->pNext;
+	CMyNode* pDelete = nullptr;
 
 	while (pTmp != nullptr)
 	{
@@ -95,5 +91,5 @@ void CMyList::ReleaseList()
 		delete pDelete;
 	}
 
-	m_Head = CUserData();
+	m_pHead = nullptr;
 }
